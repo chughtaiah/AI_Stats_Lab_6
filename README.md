@@ -1,75 +1,116 @@
-# AI/Stats Lab: MLE for Bernoulli and Poisson
+# 🧪 AI Stats Lab: Maximum Likelihood Estimation (MLE)
 
-## Overview
+## 🎯 Overview
 
-This lab is about Maximum Likelihood Estimation (MLE), with emphasis on:
+In this lab, you will implement Maximum Likelihood Estimation (MLE) for two important distributions:
 
-- likelihood and log-likelihood
-- Bernoulli and Poisson models
-- analytical MLE derivations
-- comparing candidate parameter values
-- writing robust Python code with input validation
-
-You will complete **2 tasks** in `AI_stats_lab.py`.
+- Bernoulli (binary data)
+- Poisson (count data)
 
 ---
 
-## Learning Goals
-
-By the end of this lab, you should be able to:
-
-- compute Bernoulli and Poisson log-likelihoods
-- derive and implement MLE estimators
-- explain why the sample mean appears in MLE
-- compare candidate parameter values using log-likelihood
-- handle invalid inputs correctly
+## 🎯 You have TWO tasks
 
 ---
 
-## Files
+# 🔵 Task 1: Bernoulli MLE Analysis
 
-- `AI_stats_lab.py` — starter code you must complete
-- `test_AIstats_lab.py` — tests
-- `README.md` — instructions
+### You must implement:
+
+1. `bernoulli_log_likelihood(data, theta)`  
+2. `bernoulli_mle_with_comparison(data, candidate_thetas=None)`
 
 ---
 
-## Task 1: Bernoulli MLE Analysis
-
-Implement:
-
-### `bernoulli_log_likelihood(data, theta)`
-
-For Bernoulli data \(x_i \in \{0,1\}\),
+## 📌 Model
 
 \[
-\ell(\theta) = \sum_{i=1}^n \left[x_i \log(\theta) + (1-x_i)\log(1-\theta)\right]
+X_i \in \{0,1\}, \quad P(X=1)=\theta
 \]
 
-Your function must:
+---
 
-- validate that data is non-empty
-- validate that each observation is either 0 or 1
-- validate that \(0 < \theta < 1\)
-- return the log-likelihood as a float
+## 🧮 Details
 
-### `bernoulli_mle_with_comparison(data, candidate_thetas=None)`
-
-For Bernoulli data, the MLE is:
+### 1. Log-Likelihood
 
 \[
-\hat{\theta} = \frac{1}{n}\sum_{i=1}^n x_i
+\ell(\theta) = \sum x_i \log(\theta) + (1-x_i)\log(1-\theta)
 \]
 
-Your function must return a dictionary containing:
+### Requirements:
+- Data must be non-empty  
+- Values must be 0 or 1  
+- \(0 < \theta < 1\)  
 
-- `mle`
-- `num_successes`
-- `num_failures`
-- `log_likelihoods`
-- `best_candidate`
+---
 
-If `candidate_thetas` is not provided, use:
+### 2. MLE Analysis Function
 
+`bernoulli_mle_with_comparison(data, candidate_thetas=None)`
+
+This function should:
+
+- Compute the **MLE of θ** using:
+  \[
+  \hat{\theta} = \frac{1}{n} \sum x_i
+  \]
+
+- Count:
+  - number of successes (1s)
+  - number of failures (0s)
+
+- Compute log-likelihood for each candidate θ
+
+---
+
+### Return a dictionary containing:
+
+- `mle` → estimated θ  
+- `num_successes`  
+- `num_failures`  
+- `log_likelihoods` → {θ: log-likelihood}  
+- `best_candidate` → θ with highest likelihood  
+
+---
+
+## 💡 Intuition
+
+- Bernoulli models **binary outcomes**  
+- MLE = **observed proportion of successes**
+
+---
+
+# 🔴 Task 2: Poisson MLE Analysis
+
+### You must implement:
+
+1. `poisson_log_likelihood(data, lam)`  
+2. `poisson_mle_analysis(data, candidate_lambdas=None)`
+
+---
+
+## 📌 Model
+
+\[
+X_i \in \{0,1,2,\dots\}, \quad X_i \sim \text{Poisson}(\lambda)
+\]
+
+---
+
+## 🧮 Details
+
+### 1. Log-Likelihood
+
+\[
+\ell(\lambda) = \sum \left[x_i \log(\lambda) - \lambda - \log(x_i!)\right]
+\]
+
+### Requirements:
+- Data must be non-empty  
+- Values must be nonnegative integers  
+- \(\lambda > 0\)  
+
+### Hint:
 ```python
-[0.2, 0.5, 0.8]
+math.lgamma(x + 1)
