@@ -29,7 +29,7 @@ By the end of this lab, you should be able to:
 ## Files
 
 - `AI_stats_lab.py` — starter code you must complete
-- `test_AIstats_lab.py` — public tests
+- `test_AIstats_lab.py` — tests
 - `README.md` — instructions
 
 ---
