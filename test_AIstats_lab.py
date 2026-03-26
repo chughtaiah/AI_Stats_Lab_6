@@ -1,63 +1,143 @@
+import math
 import numpy as np
+import pytest
 
 from AI_stats_lab import (
-    exponential_pdf,
-    exponential_interval_probability,
-    simulate_exponential_probability,
-    gaussian_pdf,
-    posterior_probability
+    bernoulli_log_likelihood,
+    bernoulli_mle_with_comparison,
+    poisson_log_likelihood,
+    poisson_mle_analysis,
 )
 
 
-# -------------------------------------
-# Q1 – PDF correctness
-# -------------------------------------
-
-def test_exponential_pdf():
-    val = exponential_pdf(1)
-    expected = np.exp(-1)
-    assert np.isclose(val, expected, atol=1e-6)
-
-
-# -------------------------------------
-# Q1 – Analytical probability
-# -------------------------------------
-
-def test_exponential_interval():
-    expected = np.exp(-2) - np.exp(-5)
-    result = exponential_interval_probability(2,5)
+# -----------------------------
+# Bernoulli log-likelihood tests
+# -----------------------------
+def test_bernoulli_log_likelihood_basic():
+    data = np.array([1, 1, 0, 1, 1])
+    theta = 0.8
+    expected = 4 * np.log(0.8) + 1 * np.log(0.2)
+    result = bernoulli_log_likelihood(data, theta)
     assert np.isclose(result, expected, atol=1e-6)
 
 
-# -------------------------------------
-# Q1 – Simulation check
-# -------------------------------------
-
-def test_exponential_simulation():
-    result = simulate_exponential_probability(2,5)
-    expected = np.exp(-2) - np.exp(-5)
-    assert abs(result - expected) < 0.02
+def test_bernoulli_log_likelihood_other_theta():
+    data = np.array([1, 0, 1, 0])
+    theta = 0.5
+    expected = 2 * np.log(0.5) + 2 * np.log(0.5)
+    result = bernoulli_log_likelihood(data, theta)
+    assert np.isclose(result, expected, atol=1e-6)
 
 
-# -------------------------------------
-# Q2 – Gaussian PDF
-# -------------------------------------
-
-def test_gaussian_pdf():
-    val = gaussian_pdf(40,40,2)
-    expected = 1/(np.sqrt(2*np.pi)*2)
-    assert np.isclose(val, expected, atol=1e-6)
+def test_bernoulli_log_likelihood_invalid_theta_low():
+    with pytest.raises(ValueError):
+        bernoulli_log_likelihood([1, 0, 1], 0.0)
 
 
-# -------------------------------------
-# Q2 – Posterior probability
-# -------------------------------------
+def test_bernoulli_log_likelihood_invalid_theta_high():
+    with pytest.raises(ValueError):
+        bernoulli_log_likelihood([1, 0, 1], 1.0)
 
-def test_posterior():
-    result = posterior_probability(42)
 
-    num = 0.7*np.exp(-(42-45)**2/4)
-    den = 0.3*np.exp(-(42-40)**2/4) + num
-    expected = num/den
+def test_bernoulli_log_likelihood_invalid_data():
+    with pytest.raises(ValueError):
+        bernoulli_log_likelihood([1, 2, 0], 0.5)
 
-    assert np.isclose(result, expected, atol=1e-3)
+
+def test_bernoulli_log_likelihood_empty():
+    with pytest.raises(ValueError):
+        bernoulli_log_likelihood([], 0.5)
+
+
+# -----------------------------
+# Bernoulli MLE analysis tests
+# -----------------------------
+def test_bernoulli_mle_with_comparison_basic():
+    data = np.array([1, 1, 0, 1, 1])
+    result = bernoulli_mle_with_comparison(data, [0.2, 0.5, 0.8])
+
+    assert isinstance(result, dict)
+    assert np.isclose(result["mle"], 0.8, atol=1e-6)
+    assert result["num_successes"] == 4
+    assert result["num_failures"] == 1
+    assert result["best_candidate"] == 0.8
+
+
+def test_bernoulli_mle_with_comparison_all_zeros():
+    data = np.array([0, 0, 0, 0, 0])
+    result = bernoulli_mle_with_comparison(data, [0.1, 0.2, 0.3])
+
+    assert np.isclose(result["mle"], 0.0, atol=1e-6)
+    assert result["num_successes"] == 0
+    assert result["num_failures"] == 5
+    assert result["best_candidate"] == 0.1
+
+
+def test_bernoulli_mle_with_comparison_default_candidates():
+    data = np.array([1, 0, 1, 1, 0])
+    result = bernoulli_mle_with_comparison(data)
+
+    assert "log_likelihoods" in result
+    assert set(result["log_likelihoods"].keys()) == {0.2, 0.5, 0.8}
+
+
+# -----------------------------
+# Poisson log-likelihood tests
+# -----------------------------
+def test_poisson_log_likelihood_basic():
+    data = np.array([2, 3, 4])
+    lam = 3.0
+    expected = sum(x * np.log(lam) - lam - math.lgamma(x + 1) for x in data)
+    result = poisson_log_likelihood(data, lam)
+    assert np.isclose(result, expected, atol=1e-6)
+
+
+def test_poisson_log_likelihood_invalid_lambda():
+    with pytest.raises(ValueError):
+        poisson_log_likelihood([1, 2, 3], 0.0)
+
+
+def test_poisson_log_likelihood_negative_count():
+    with pytest.raises(ValueError):
+        poisson_log_likelihood([1, -1, 3], 2.0)
+
+
+def test_poisson_log_likelihood_noninteger_count():
+    with pytest.raises(ValueError):
+        poisson_log_likelihood([1, 2.5, 3], 2.0)
+
+
+def test_poisson_log_likelihood_empty():
+    with pytest.raises(ValueError):
+        poisson_log_likelihood([], 2.0)
+
+
+# -----------------------------
+# Poisson MLE analysis tests
+# -----------------------------
+def test_poisson_mle_analysis_basic():
+    data = np.array([3, 4, 2, 6, 5])
+    result = poisson_mle_analysis(data, [2.0, 4.0, 6.0])
+
+    assert isinstance(result, dict)
+    assert np.isclose(result["mle"], 4.0, atol=1e-6)
+    assert np.isclose(result["sample_mean"], 4.0, atol=1e-6)
+    assert result["total_count"] == 20
+    assert result["n"] == 5
+    assert result["best_candidate"] == 4.0
+
+
+def test_poisson_mle_analysis_default_candidates():
+    data = np.array([0, 1, 1, 2, 1])
+    result = poisson_mle_analysis(data)
+
+    assert "log_likelihoods" in result
+    assert set(result["log_likelihoods"].keys()) == {1.0, 3.0, 5.0}
+
+
+def test_poisson_mle_analysis_single_value():
+    data = np.array([10])
+    result = poisson_mle_analysis(data, [5.0, 10.0, 15.0])
+
+    assert np.isclose(result["mle"], 10.0, atol=1e-6)
+    assert result["best_candidate"] == 10.0
