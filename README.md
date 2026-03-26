@@ -2,7 +2,7 @@
 
 ## Overview
 
-This lab is based on lecture slides on Maximum Likelihood Estimation (MLE), with emphasis on:
+This lab is about Maximum Likelihood Estimation (MLE), with emphasis on:
 
 - likelihood and log-likelihood
 - Bernoulli and Poisson models
@@ -10,7 +10,7 @@ This lab is based on lecture slides on Maximum Likelihood Estimation (MLE), with
 - comparing candidate parameter values
 - writing robust Python code with input validation
 
-You will complete **2 substantial tasks** in `AI_stats_lab.py`.
+You will complete **2 tasks** in `AI_stats_lab.py`.
 
 ---
 
