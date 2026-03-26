@@ -1,63 +1,28 @@
 import numpy as np
 
-
-# -------------------------------------------------
-# Question 1 – Exponential Distribution
-# -------------------------------------------------
-
-def exponential_pdf(x, lam=1):
+def bernoulli_mle(data):
     """
-    Return PDF of exponential distribution.
+    Compute MLE for Bernoulli parameter θ.
 
-    f(x) = lam * exp(-lam*x) for x >= 0
+    Parameters:
+        data (array-like): list/array of 0s and 1s
+
+    Returns:
+        float: estimated θ
     """
-    pass
+    # TODO: implement
+    raise NotImplementedError("Implement Bernoulli MLE")
 
 
-def exponential_interval_probability(a, b, lam=1):
+def poisson_mle(data):
     """
-    Compute P(a < X < b) using analytical formula.
+    Compute MLE for Poisson parameter λ.
+
+    Parameters:
+        data (array-like): count data (0,1,2,...)
+
+    Returns:
+        float: estimated λ
     """
-    pass
-
-
-def simulate_exponential_probability(a, b, n=100000):
-    """
-    Simulate exponential samples and estimate
-    P(a < X < b).
-    """
-    pass
-
-
-# -------------------------------------------------
-# Question 2 – Bayesian Classification
-# -------------------------------------------------
-
-def gaussian_pdf(x, mu, sigma):
-    """
-    Return Gaussian PDF.
-    """
-    pass
-
-
-def posterior_probability(time):
-    """
-    Compute P(B | X = time)
-    using Bayes rule.
-
-    Priors:
-    P(A)=0.3
-    P(B)=0.7
-
-    Distributions:
-    A ~ N(40,4)
-    B ~ N(45,4)
-    """
-    pass
-
-
-def simulate_posterior_probability(time, n=100000):
-    """
-    Estimate P(B | X=time) using simulation.
-    """
-    pass
+    # TODO: implement
+    raise NotImplementedError("Implement Poisson MLE")
