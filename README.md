@@ -1,4 +1,4 @@
-# AI Stats Lab: Advanced MLE for Bernoulli and Poisson
+# AI/Stats Lab: MLE for Bernoulli and Poisson
 
 ## Overview
 
